@@ -1,7 +1,9 @@
 package com.plcoding.stockmarketapp.data.repository
 
+import com.plcoding.stockmarketapp.data.csv.ICsvParser
 import com.plcoding.stockmarketapp.data.local.StockDatabase
 import com.plcoding.stockmarketapp.data.mapper.toCompanyListing
+import com.plcoding.stockmarketapp.data.mapper.toCompanyListingEntity
 import com.plcoding.stockmarketapp.data.remote.IStockApi
 import com.plcoding.stockmarketapp.domain.model.CompanyListing
 import com.plcoding.stockmarketapp.domain.repository.IStockRepository
@@ -16,7 +18,8 @@ import javax.inject.Singleton
 @Singleton
 class StockRepository @Inject constructor(
     val api: IStockApi,
-    val database: StockDatabase
+    val database: StockDatabase,
+    val companyListingsParser: ICsvParser<CompanyListing>
 ) : IStockRepository {
     private val dao = database.dao
 
@@ -43,13 +46,32 @@ class StockRepository @Inject constructor(
 
             val remoteListings = try {
                 val response = api.getListings()
-                response.byteStream() // TODO parse csv file but in separte class (SOLID)
+                companyListingsParser.parse(response.byteStream())
             } catch (exception: IOException) {
                 exception.printStackTrace()
                 emit(Resource.Error("Could not load data."))
+                null
             } catch (exception: HttpException) {
                 exception.printStackTrace()
                 emit(Resource.Error(exception.message ?: "Unknown http error."))
+                null
+            }
+            remoteListings?.let { listings ->
+                dao.clearCompanyListing()
+                dao.insertCompanyListing(
+                    listings.map { listing -> listing.toCompanyListingEntity() }
+                )
+
+                emit(
+                    Resource.Success(
+                        dao
+                            .searchCompanyListing("") // stick to single source of truth
+                            .map { entity ->
+                                entity.toCompanyListing()
+                            })
+                )
+
+                emit(Resource.Loading(false))
             }
         }
     }

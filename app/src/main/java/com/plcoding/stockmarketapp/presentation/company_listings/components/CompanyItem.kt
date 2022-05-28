@@ -57,7 +57,5 @@ fun CompanyItem(
                 color = MaterialTheme.colors.onBackground
             )
         }
-
-        Text(text = company.exchange)
     }
 }

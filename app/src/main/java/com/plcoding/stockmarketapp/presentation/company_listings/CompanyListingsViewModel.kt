@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CompanyListingsViewModel @Inject constructor(
-    val repository: IStockRepository
+    private val repository: IStockRepository
 ) : ViewModel() {
     var state by mutableStateOf(CompanyListingsState())
     private var searchJob: Job? = null

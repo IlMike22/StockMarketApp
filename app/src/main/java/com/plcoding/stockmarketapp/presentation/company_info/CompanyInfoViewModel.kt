@@ -2,6 +2,7 @@ package com.plcoding.stockmarketapp.presentation.company_info
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -25,7 +26,6 @@ class CompanyInfoViewModel @Inject constructor(
             state = state.copy(
                 isLoading = true
             )
-
 
             val companyInfoResult = async { repository.getCompanyInfo(symbol) }
             val intraDayInfoResult = async { repository.getIntradayInfo(symbol) }
@@ -66,11 +66,6 @@ class CompanyInfoViewModel @Inject constructor(
                     )
                 }
                 else -> Unit
-            }
-
-
-            if (companyInfoResult is Resource.Success) {
-                val companyInfo = companyInfoResult.data
             }
         }
     }

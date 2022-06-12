@@ -30,7 +30,10 @@ class IntradayParser @Inject constructor() : ICsvParser<IntradayInfo> {
 
                     dto.toIntradayInfo()
                 }.filter { intradayInfo ->
-                    intradayInfo.date.dayOfMonth == LocalDate.now().minusDays(1).dayOfMonth
+                    // TODO filter out if today and / or yesterday it was sunday or saturday due on this days there are no values!
+                    // TODO experimental set 4 instead of 1
+                    // other TODO: Caching for CompanyInfo (as well as for CompanyListings we already have)
+                    intradayInfo.date.dayOfMonth == LocalDate.now().minusDays(4).dayOfMonth
                 }.sortedBy { intradayInfo ->
                     intradayInfo.date.hour
                 }

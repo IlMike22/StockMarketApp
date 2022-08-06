@@ -13,18 +13,18 @@ interface IStockApi {
 
     @GET("query?function=OVERVIEW")
     suspend fun getCompanyInfo(
-        @Query("apiKey") apiKey: String = API_KEY,
-        @Query("symbol") symbol: String
+        @Query("symbol") symbol: String,
+        @Query("apikey") apiKey: String = API_KEY
     ):CompanyInfoDto
 
     @GET("query?function=TIME_SERIES_INTRADAY&interval=60min&datatype=csv")
     suspend fun getIntradayInfo(
-        @Query("apiKey") apiKey: String = API_KEY,
-        @Query("symbol") symbol: String
+        @Query("symbol") symbol: String,
+        @Query("apikey") apiKey: String = API_KEY
     ):ResponseBody
 
     companion object {
-        const val API_KEY = "LWKQAUP8YVDLVF2A"
+        const val API_KEY = "SVHFZKNX5D1SKEPA"
         const val BASE_URL = "https://alphavantage.co"
     }
 }

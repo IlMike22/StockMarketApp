@@ -82,7 +82,8 @@ class StockRepository @Inject constructor(
 
     override suspend fun getCompanyInfo(symbol: String): Resource<CompanyInfo> {
         return try {
-            Resource.Success(api.getCompanyInfo(symbol = symbol).toCompanyInfo())
+            val result = Resource.Success(api.getCompanyInfo(symbol = symbol).toCompanyInfo())
+            result
         } catch (exception: IOException) {
             exception.printStackTrace()
             Resource.Error(message = "Couldnt load intraday info")
